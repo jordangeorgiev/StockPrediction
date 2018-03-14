@@ -2,6 +2,7 @@ package com.isaac.stock.utils;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
+import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.NumberTickUnit;
@@ -11,6 +12,8 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 import javax.swing.*;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Created by zhanghao on 26/7/17.
@@ -48,7 +51,15 @@ public class PlotUtil {
 		final NumberAxis rangeAxis = (NumberAxis) xyPlot.getRangeAxis();
 		rangeAxis.setRange(min, max);
 		rangeAxis.setTickUnit(new NumberTickUnit(50));
-		final ChartPanel panel = new ChartPanel(chart);
+
+        File jpegFile = new File("src/main/resources/".concat(String.valueOf(name)).concat(".jpg"));
+        try {
+            ChartUtilities.saveChartAsJPEG(jpegFile, chart, 600, 400);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        final ChartPanel panel = new ChartPanel(chart);
 		final JFrame f = new JFrame();
 		f.add(panel);
 		f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

@@ -27,17 +27,17 @@ public class StockPricePrediction {
 
     private static final Logger log = LoggerFactory.getLogger(StockPricePrediction.class);
 
-    private static int exampleLength = 22; // time series length, assume 22 working days per month
+    private static int exampleLength = 100; // time series length, assume 22 working days per month
 
     public static void main (String[] args) throws IOException {
         String file = new ClassPathResource("prices-split-adjusted.csv").getFile().getAbsolutePath();
-        String symbol = "GOOG"; // stock name
+        String symbol = "AAPL";//"GOOG"; // stock name
         int batchSize = 64; // mini-batch size
         double splitRatio = 0.9; // 90% for training, 10% for testing
-        int epochs = 100; // training epochs
+        int epochs = 400; // training epochs
 
         log.info("Create dataSet iterator...");
-        PriceCategory category = PriceCategory.CLOSE; // CLOSE: predict close price
+        PriceCategory category = PriceCategory.ALL; // CLOSE: predict close price
         StockDataSetIterator iterator = new StockDataSetIterator(file, symbol, batchSize, exampleLength, splitRatio, category);
         log.info("Load test dataset...");
         List<Pair<INDArray, INDArray>> test = iterator.getTestDataSet();
@@ -54,6 +54,7 @@ public class StockPricePrediction {
 
         log.info("Saving model...");
         File locationToSave = new File("src/main/resources/StockPriceLSTM_".concat(String.valueOf(category)).concat(".zip"));
+//        File locationToSave = new File("/home/jordan/stock/StockPriceLSTM_".concat(String.valueOf(category)).concat(".zip"));
         // saveUpdater: i.e., the state for Momentum, RMSProp, Adagrad etc. Save this to train your network more in the future
         ModelSerializer.writeModel(net, locationToSave, true);
 
