@@ -29,16 +29,20 @@ public class StockPricePrediction {
 
     private static int exampleLength = 100; // time series length, assume 22 working days per month
 
+    private static boolean SERVER_MODE = true;
+
+    private static String EXEC_DIR = "/home/jordan/stock/";
+
     public static void main (String[] args) throws IOException {
-        String file = new ClassPathResource("prices-split-adjusted.csv").getFile().getAbsolutePath();
+//        String file = new ClassPathResource("prices-split-adjusted.csv").getFile().getAbsolutePath();
         String symbol = "AAPL";//"GOOG"; // stock name
         int batchSize = 64; // mini-batch size
         double splitRatio = 0.9; // 90% for training, 10% for testing
-        int epochs = 400; // training epochs
+        int epochs = 500; // training epochs
 
         log.info("Create dataSet iterator...");
         PriceCategory category = PriceCategory.ALL; // CLOSE: predict close price
-        StockDataSetIterator iterator = new StockDataSetIterator(file, symbol, batchSize, exampleLength, splitRatio, category);
+        StockDataSetIterator iterator = new StockDataSetIterator(EXEC_DIR.concat("prices-split-adjusted.csv"), symbol, batchSize, exampleLength, splitRatio, category);
         log.info("Load test dataset...");
         List<Pair<INDArray, INDArray>> test = iterator.getTestDataSet();
 
@@ -53,24 +57,28 @@ public class StockPricePrediction {
         }
 
         log.info("Saving model...");
-        File locationToSave = new File("src/main/resources/StockPriceLSTM_".concat(String.valueOf(category)).concat(".zip"));
+        File locationToSave = new File(EXEC_DIR
+                .concat("StockPriceLSTM_").concat(String.valueOf(category)).concat(".zip"));
 //        File locationToSave = new File("/home/jordan/stock/StockPriceLSTM_".concat(String.valueOf(category)).concat(".zip"));
         // saveUpdater: i.e., the state for Momentum, RMSProp, Adagrad etc. Save this to train your network more in the future
         ModelSerializer.writeModel(net, locationToSave, true);
 
-        log.info("Load model...");
-        net = ModelSerializer.restoreMultiLayerNetwork(locationToSave);
+        if(!SERVER_MODE) {
+            log.info("Load model...");
+            net = ModelSerializer.restoreMultiLayerNetwork(locationToSave);
 
-        log.info("Testing...");
-        if (category.equals(PriceCategory.ALL)) {
-            INDArray max = Nd4j.create(iterator.getMaxArray());
-            INDArray min = Nd4j.create(iterator.getMinArray());
-            predictAllCategories(net, test, max, min);
-        } else {
-            double max = iterator.getMaxNum(category);
-            double min = iterator.getMinNum(category);
-            predictPriceOneAhead(net, test, max, min, category);
+            log.info("Testing...");
+            if (category.equals(PriceCategory.ALL)) {
+                INDArray max = Nd4j.create(iterator.getMaxArray());
+                INDArray min = Nd4j.create(iterator.getMinArray());
+                predictAllCategories(net, test, max, min);
+            } else {
+                double max = iterator.getMaxNum(category);
+                double min = iterator.getMinNum(category);
+                predictPriceOneAhead(net, test, max, min, category);
+            }
         }
+
         log.info("Done...");
     }
 
