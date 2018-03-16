@@ -28,7 +28,7 @@
                 <groupId>org.nd4j</groupId>
                 <artifactId>nd4j-native-platform</artifactId>
                 <version>${nd4j.version}</version>
-                <classifier>linux-x86_64</classifier>
+                <classifier>linux-x86_64-avx2</classifier>
             </dependency>
             <dependency>
                 <groupId>org.nd4j</groupId>
@@ -54,7 +54,7 @@
             <groupId>org.nd4j</groupId>
             <artifactId>nd4j-native</artifactId>
             <version>${deeplearning4j.version}</version>
-            <classifier>linux-x86_64</classifier>
+            <classifier>linux-x86_64-avx2</classifier>
         </dependency>
         <dependency>
             <groupId>org.deeplearning4j</groupId>
