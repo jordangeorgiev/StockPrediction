@@ -31,6 +31,7 @@ public class StockPricePrediction {
 
     private static boolean SERVER_MODE = true;
 
+//    private static String EXEC_DIR = "C:\\Users\\jordan\\git\\StockPrediction\\src\\main\\resources\\";
     private static String EXEC_DIR = "/home/jordan/stock/";
 
     public static void main (String[] args) throws IOException {
