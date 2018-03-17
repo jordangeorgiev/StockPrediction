@@ -21,6 +21,7 @@
         <maven-shade-plugin.version>2.4.3</maven-shade-plugin.version>
         <shadedClassifier>bin</shadedClassifier>
     </properties>
+<!--
 
     <dependencyManagement>
         <dependencies>
@@ -42,6 +43,7 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+-->
 
     <dependencies>
         <!-- DL4J and ND4J Related Dependencies -->
